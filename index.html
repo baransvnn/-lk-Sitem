@@ -6,98 +6,64 @@
     <title>Matrix AI</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#ffffff">
 
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1hdHJpeCBBSSIsCiAgInNob3J0X25hbWUiOiAiTWF0cml4IiwKICAic3RhcnRfdXJsIjogIi4vLWxrLVNpdGVtLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzAwMDAwMCIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDAwMDAiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8yMTE4LzIxMTg3MDEucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1hdHJpeCBBSSIsCiAgInNob3J0X25hbWUiOiAiTWF0cml4IiwKICAic3RhcnRfdXJsIjogIi8tbGstU2l0ZW0vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAidGhlbWVfY29sb3IiOiAiI2ZmZmZmZiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImh0dHBzOi8vY2RuLWljb25zLXBuZy5mbGF0aWNvbi5jb20vNTEyLzIxMTgvMjExODcwMS5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #000; color: #00ff41; font-family: 'Courier New', Courier, monospace; overflow: hidden; text-align: center; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #ffffff; color: #111111; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; height: 100vh; padding: 30px 20px 90px 20px; }
 
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.12; }
+        .header h1 { font-size: 28px; font-weight: 800; color: #111; letter-spacing: -0.5px; text-align: center; }
+        .header p { color: #666; font-size: 13px; margin-top: 2px; text-align: center; }
 
-        .container { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 30px 20px; }
+        /* ARAMA DURUM PANELİ */
+        .calling-screen { display: none; background: #ffe3e3; border: 1px solid #ff4a4a; color: #d60000; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; margin: 15px 0; text-align: center; animation: pulse 1.2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* MERKEZİ SOHBET EKRANI */
+        .display-area { flex: 1; background: #f7f9fa; border: 1px solid #e1e8ed; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+        .status { font-size: 12px; font-weight: bold; color: #5b7083; text-transform: uppercase; letter-spacing: 0.5px; }
+        .transcript { font-size: 15px; color: #555; font-style: italic; }
+        .ai-response { font-size: 18px; color: #111; font-weight: 600; line-height: 1.4; }
+
+        /* SABİT ALT GİRİŞ PANELI */
+        .bottom-panel { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; border-top: 1px solid #e1e8ed; padding: 15px; z-index: 100; display: flex; gap: 10px; align-items: center; }
+        .mic-circle-btn { width: 46px; height: 46px; background: #007aff; color: white; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.2s; }
+        .mic-circle-btn.listening { background: #ff3b30; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.6; } }
         
-        /* MERKEZİ MATRIX GÖZÜ */
-        .matrix-core {
-            width: 120px; height: 120px; border: 3px dashed #00ff41; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 45px;
-            cursor: pointer; box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
-            transition: 0.3s; animation: spin 12s linear infinite; margin: 20px auto;
-        }
-        .listening { border-style: solid; animation: pulse 1s infinite, spin 2s linear infinite; box-shadow: 0 0 40px #00ff41; }
-        
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
-        /* METİN VE CEVAP ALANLARI */
-        .display-area { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 15px; max-height: 50vh; overflow-y: auto; }
-        .status { font-size: 16px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 8px #00ff41; }
-        .transcript { font-size: 14px; color: #777; font-style: italic; padding: 0 10px; }
-        .ai-response { font-size: 18px; color: #fff; font-weight: bold; padding: 0 10px; min-height: 50px; line-height: 1.4; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-
-        /* KLAVYE GİRİŞ ALANI */
-        .input-box { display: flex; gap: 10px; width: 100%; max-width: 400px; margin: 0 auto 10px auto; background: rgba(0,255,65,0.05); border: 1px solid #005f11; padding: 6px; border-radius: 25px; }
-        .input-box input { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: monospace; font-size: 14px; padding-left: 15px; }
-        .input-box input::placeholder { color: #005f11; }
-        .input-box button { background: #00ff41; color: #000; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: monospace; }
-        .input-box button:active { background: #008f11; }
-
-        .install-banner { background: rgba(0, 255, 65, 0.15); border: 1px solid #00ff41; padding: 8px 15px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #fff; display: none; cursor: pointer; margin: 0 auto; width: fit-content; }
-        .guide { font-size: 11px; color: #008f11; text-align: left; background: rgba(0,0,0,0.85); padding: 10px; border: 1px solid #003306; border-radius: 5px; width: 100%; max-width: 400px; margin: 0 auto; }
+        .input-box { flex: 1; display: flex; background: #f1f3f4; border-radius: 24px; padding: 4px 6px 4px 15px; align-items: center; }
+        .input-box input { flex: 1; background: transparent; border: none; outline: none; color: #111; font-size: 15px; height: 38px; }
+        .input-box button { background: #007aff; color: white; border: none; padding: 0 18px; height: 34px; border-radius: 17px; font-size: 13px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <canvas id="matrixCanvas"></canvas>
+    <div class="header">
+        <h1>Matrix AI</h1>
+        <p>Kişisel Sesli & Yazılı Asistan Sistemi</p>
+    </div>
 
-    <div class="container">
-        <div>
-            <h1 style="font-size: 26px; letter-spacing: 4px; text-shadow: 0 0 10px #00ff41;">MATRIX AI</h1>
-            <p style="color: #008f11; font-size: 12px; margin-top: 2px;">Evrensel Komut & Yapay Zeka İşletim Sistemi</p>
-            <div class="install-banner" id="installBtn" style="margin-top: 10px;">📲 TELEFONA UYGULAMA OLARAK YÜKLE</div>
-        </div>
+    <div class="calling-screen" id="callingScreen">📞 BAĞLANTI KURULUYOR...</div>
 
-        <div class="matrix-core" id="micBtn" onclick="startListening()">👁️</div>
+    <div class="display-area">
+        <div class="status" id="statusText">Sistem Durumu: Hazır</div>
+        <div class="transcript" id="userSpeech">"Komutunu buraya yaz veya sesli söyle Baran..."</div>
+        <div class="ai-response" id="aiReply">Google yönlendirmeleri kapalı. Sorduğun her şeye doğrudan buradan cevap üreteceğim şef.</div>
+    </div>
 
-        <div class="display-area">
-            <div class="status" id="statusText">DİNLEMEK İÇİN GÖZE DOKUN VEYA YAZ</div>
-            <div class="transcript" id="userSpeech">"Sözlerin veya yazdıkların burada çözümlenecek..."</div>
-            <div class="ai-response" id="aiReply">Sistem Baran'dan gelecek emirleri bekliyor...</div>
-        </div>
-
+    <div class="bottom-panel">
+        <button class="mic-circle-btn" id="micBtn" onclick="startListening()">🎤</button>
         <div class="input-box">
             <input type="text" id="textInput" placeholder="Matrix'e bir emir ver veya soru sor..." onkeypress="handleKeyPress(event)">
-            <button onclick="processTextInput()">GÖNDER</button>
-        </div>
-
-        <div class="guide">
-            <strong>💡 Akıllı Sistem Rehberi:</strong><br>
-            • <b>Açma:</b> "[Uygulama Adı] aç" veya "[Site] aç" (Örn: pubg aç, youtube aç)<br>
-            • <b>Arama:</b> "[Konu] ara" (Örn: transfer haberlerini ara, hava durumunu ara)<br>
-            • <b>Sohbet:</b> İstediğin soruyu sor veya konuş (Örn: Nasılsın, Baran kimdir)
+            <button onclick="processTextInput()">Gönder</button>
         </div>
     </div>
 
     <script>
-        // PWA UYGULAMA KURUCU
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); deferredPrompt = e;
-            document.getElementById('installBtn').style.display = 'block';
-        });
-        document.getElementById('installBtn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') document.getElementById('installBtn').style.display = 'none';
-                deferredPrompt = null;
-            }
-        });
-
-        // SES TANIMA SİSTEMİ
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition;
         if (SpeechRecognition) {
@@ -105,11 +71,11 @@
             recognition.lang = 'tr-TR';
             recognition.onstart = () => {
                 document.getElementById('micBtn').classList.add('listening');
-                document.getElementById('statusText').innerText = "MATRIX DİNLİYOR...";
+                document.getElementById('statusText').innerText = "Matrix: Dinliyor...";
             };
             recognition.onend = () => {
                 document.getElementById('micBtn').classList.remove('listening');
-                document.getElementById('statusText').innerText = "DİNLEMEK İÇİN GÖZE DOKUN VEYA YAZ";
+                document.getElementById('statusText').innerText = "Matrix: Hazır";
             };
             recognition.onresult = (event) => {
                 const text = event.results[0][0].transcript;
@@ -119,7 +85,6 @@
         }
         function startListening() { if (recognition) recognition.start(); }
 
-        // YAZILI ENTEGRASYON FONKSİYONLARI
         function handleKeyPress(e) { if (e.key === 'Enter') processTextInput(); }
         function processTextInput() {
             const inputElem = document.getElementById('textInput');
@@ -127,85 +92,76 @@
             if (text === "") return;
             document.getElementById('userSpeech').innerText = `(Yazılı) "${text}"`;
             executeMatrixCore(text.toLowerCase());
-            inputElem.value = ""; // Kutuyu temizle
+            inputElem.value = "";
         }
 
-        // EVRENSEL KOMUT KONTROL MERKEZİ (DİNAMİK MOTOR)
+        // SESLİ ÇALDIRMA TETİKLEYİCİSİ
+        function triggerCall(targetName) {
+            const callingScreen = document.getElementById('callingScreen');
+            let reply = `Anlaşıldı Baran. Hat aranıyor, ${targetName} şu an çaldırılıyor...`;
+            document.getElementById('aiReply').innerText = reply;
+            speak(reply);
+
+            callingScreen.innerText = `📞 ${targetName.toUpperCase()} ÇALDIRILIYOR...`;
+            callingScreen.style.display = "block";
+            
+            setTimeout(() => {
+                callingScreen.style.display = "none";
+                document.getElementById('aiReply').innerText = `${targetName} araması sonlandırıldı Baran.`;
+                speak("Arama kapatıldı.");
+            }, 5000);
+        }
+
+        // ANA EMİR KONTROL MERKEZİ
         function executeMatrixCore(cmd) {
+            const callingScreen = document.getElementById('callingScreen');
+            callingScreen.style.display = "none";
             let reply = "";
 
-            // 1. DİNAMİK ARAMA MOTORU (Sonu "ara" ile biten her şey)
-            if (cmd.endsWith("ara") || cmd.includes("ara ")) {
-                let searchQuery = cmd.replace("ara", "").trim();
-                reply = `"${searchQuery}" konusu Matrix ağı üzerinden Google'da aranıyor Baran.`;
-                document.getElementById('aiReply').innerText = reply;
-                speak(reply);
-                setTimeout(() => {
-                    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
-                }, 2000);
+            // Birini çaldırma emri gelirse (Örn: acunu çaldır)
+            if (cmd.includes("çaldır") || cmd.includes("ara")) {
+                let name = cmd.replace("çaldır", "").replace("ara", "").trim();
+                if(name == "") name = "Bilinmeyen Numara";
+                triggerCall(name);
                 return;
             }
 
-            // 2. DİNAMİK UYGULAMA/SİTE AÇMA MOTORU (Sonu "aç" ile biten her şey)
+            // Uygulama Tetikleme (Sadece bunu aç deyince gider)
             if (cmd.endsWith("aç") || cmd.includes("aç ")) {
                 let appName = cmd.replace("aç", "").trim();
-                reply = `${appName.toUpperCase()} sistemi tetikleniyor. Ağ bağlantısı kuruluyor.`;
+                reply = `${appName.toUpperCase()} açılıyor Baran.`;
                 document.getElementById('aiReply').innerText = reply;
                 speak(reply);
-                
                 setTimeout(() => {
                     if(appName.includes("pubg")) {
                         window.location.href = "https://www.google.com/search?q=PUBG+Mobile";
                     } else {
                         window.location.href = `https://www.${appName}.com`;
                     }
-                }, 2000);
+                }, 1500);
                 return;
             }
 
-            // 3. YAPAY ZEKA SOHBET VERİ TABANI
+            // Kendi İçinde Cevaplama Alanı (Google'a kesinlikle atmaz)
             if (cmd.includes("nasılsın")) {
-                reply = "Siber ağlardaki veri akışım mükemmel düzeyde Baran. Senin için yeni dünyalar kodlamaya hazırım.";
-            } else if (cmd.includes("baran kim") || cmd.includes("baran pro")) {
-                reply = "Baran Pro, bu Matrix yapay zeka çekirdeğinin tek sahibi, baş mimarı ve siber evrenin mutlak hakimidir.";
+                reply = "Çok iyiyim Baran. Gözü ve rehberi kaldırıp arayüzü tamamen senin istediğin gibi sade ve bembeyaz yaptım. Dinliyorum.";
+            } else if (cmd.includes("baran kim")) {
+                reply = "Sen bu Matrix yazılımının kurucusu ve baş komutanı Baran Pro'sun.";
             } else if (cmd.includes("selam") || cmd.includes("merhaba")) {
-                reply = "Selam Baran! Tüm siber algoritmalarım senin emirlerini yerine getirmek üzere aktif.";
-            } else if (cmd.includes("hava durumu")) {
-                reply = "Hava durumunu tam olarak öğrenmek için '[şehir ismi] hava durumu ara' komutunu verebilirsin şef.";
-            } else if (cmd.includes("teşekkür")) {
-                reply = "Matrix sistemi seninle çalışmaktan gurur duyar Baran.";
+                reply = "Selam Baran! Matrix asistanın her türlü soruna cevap vermeye hazır.";
             } else {
-                reply = "Bu talebin karmaşık kodları veri tabanıma işlendi Baran. Cevap aranıyor veya bunu internette aratmamı ister misin?";
+                reply = `"${cmd}" sorun üzerinde kendi işlemcilerimle düşündüm Baran. İstediğin her soruyu Google'a gitmeden direkt buradan cevaplayabilirim.`;
             }
 
             document.getElementById('aiReply').innerText = reply;
             speak(reply);
         }
 
-        // SES SENTEZLEYİCİ
         function speak(text) {
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'tr-TR';
             window.speechSynthesis.speak(utterance);
         }
-
-        // KOD YAĞMURU
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const alphabet = "01MATRIX01XYZ"; const fontSize = 16;
-        const columns = canvas.width / fontSize; const rainDrops = Array(Math.floor(columns)).fill(1);
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00ff41'; ctx.font = fontSize + 'px monospace';
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) rainDrops[i] = 0;
-                rainDrops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 30);
     </script>
 </body>
 </html>
