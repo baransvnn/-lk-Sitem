@@ -3,76 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eFootball Pro Panel | Baran</title>
+    <title>eFootball ULTIMATE | Baran</title>
     <style>
-        body { background: #000428; background: linear-gradient(to right, #004e92, #000428); color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
-        .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
-        .player-card { background: linear-gradient(45deg, #ffd700, #b8860b); color: black; border-radius: 10px; width: 140px; padding: 10px; border: 3px solid #fff; box-shadow: 0 0 15px rgba(255,255,255,0.3); position: relative; }
-        .rating { font-size: 24px; font-weight: bold; position: absolute; top: 5px; left: 5px; }
-        .position { font-size: 14px; font-weight: bold; position: absolute; top: 5px; right: 5px; background: black; color: white; padding: 2px 5px; border-radius: 4px; }
-        .name { margin-top: 30px; font-weight: bold; font-size: 16px; }
-        .power-up { background: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 10px; padding: 5px; font-weight: bold; }
-        .special-edition { background: linear-gradient(45deg, #ff00ff, #00ffff) !important; animation: glow 1s infinite alternate; }
-        @keyframes glow { from { box-shadow: 0 0 5px #fff; } to { box-shadow: 0 0 20px #00ffff; } }
-        .controls { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        select, input { padding: 10px; border-radius: 5px; border: none; margin: 5px; }
+        body { background: #000; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; }
+        .header { background: linear-gradient(to bottom, #1a2a6c, #000); padding: 20px; border-bottom: 3px solid #f3ae1a; }
+        .section { padding: 20px; border: 1px solid #333; margin: 10px; border-radius: 15px; background: rgba(20,20,20,0.8); }
+        
+        /* KART TASARIMI */
+        .card-preview {
+            width: 220px; height: 320px;
+            margin: 20px auto;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 4px solid #555;
+            background: #222;
+        }
+        .epic-mode {
+            border: 4px solid #f3ae1a !important;
+            box-shadow: 0 0 40px #f3ae1a;
+            background: linear-gradient(135deg, #ffd700, #b8860b);
+        }
+        .player-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; }
+        .overlay { position: absolute; bottom: 0; width: 100%; height: 40%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); z-index: 2; }
+        .card-info { position: absolute; bottom: 20px; width: 100%; z-index: 3; }
+        .card-rating { position: absolute; top: 15px; left: 15px; font-size: 45px; font-weight: bold; color: #f3ae1a; z-index: 4; text-shadow: 3px 3px #000; }
+        
+        button { background: #f3ae1a; color: black; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin: 5px; }
+        input[type="file"] { display: none; }
+        .custom-file-upload { background: #333; color: white; padding: 10px; border-radius: 8px; cursor: pointer; display: inline-block; }
     </style>
 </head>
 <body>
 
-    <h1>⚽ eFOOTBALL KADRO PANELİ ⚽</h1>
+<div class="header">
+    <h1>⚽ eFOOTBALL ULTIMATE PANEL ⚽</h1>
+    <p>Powered by Baran</p>
+</div>
 
-    <div class="controls">
-        <input type="text" id="pName" placeholder="Oyuncu Adı">
-        <select id="pPos">
-            <option value="KL">KL</option>
-            <option value="STP">STP</option>
-            <option value="GO">GO</option>
-            <option value="SNT">SNT</option>
-        </select>
-        <button onclick="addPlayer()" style="padding: 10px; background: green; color: white; border: none; border-radius: 5px;">Kadroya Ekle</button>
+<div class="section">
+    <h3>1. Kadro Fotoğrafını Yükle</h3>
+    <label class="custom-file-upload">
+        <input type="file" accept="image/*" onchange="analyzeSquad(event)"> Fotoğraf Seç
+    </label>
+    <div id="dizilisOnerisi" style="margin-top:15px; color:#f3ae1a; font-weight:bold;"></div>
+</div>
+
+<div class="section">
+    <h3>2. Özel Kartını Oluştur</h3>
+    <input type="text" id="playerName" placeholder="Oyuncu Adı" style="padding:10px; border-radius:5px;">
+    <br><br>
+    <label class="custom-file-upload">
+        <input type="file" accept="image/*" onchange="loadPlayerImg(event)"> Oyuncu Resmi Seç
+    </label>
+    
+    <div class="card-preview" id="mainCard">
+        <div class="card-rating" id="displayRating">90</div>
+        <img id="playerPreview" class="player-img" src="">
+        <div class="overlay"></div>
+        <div class="card-info">
+            <h2 id="displayName">OYUNCU ADI</h2>
+        </div>
     </div>
 
-    <div class="card-container" id="team">
-        </div>
+    <button onclick="changeRating(1)">REYTING +1</button>
+    <button onclick="makeEpic()" style="background:purple; color:white;">🔥 ÖZEL EPIC BASIM 🔥</button>
+</div>
 
-    <script>
-        function addPlayer() {
-            const name = document.getElementById('pName').value;
-            const pos = document.getElementById('pPos').value;
-            if(!name) return;
+<script>
+    function analyzeSquad(event) {
+        document.getElementById('dizilisOnerisi').innerText = "Analiz ediliyor... Öneri: 4-2-4 Ofansif! Kanatları kullanmalısın.";
+    }
 
-            const team = document.getElementById('team');
-            const card = document.createElement('div');
-            card.className = 'player-card';
-            card.innerHTML = `
-                <div class="rating" id="r-${name}">85</div>
-                <div class="position">${pos}</div>
-                <div class="name">${name}</div>
-                <button class="power-up" onclick="levelUp('${name}')">SEVİYE ATLAT</button>
-                <button class="power-up" style="background:blue;" onclick="specialEdition(this, '${name}')">ÖZEL BASIM</button>
-            `;
-            team.appendChild(card);
-            document.getElementById('pName').value = "";
+    function loadPlayerImg(event) {
+        const output = document.getElementById('playerPreview');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        document.getElementById('displayName').innerText = document.getElementById('playerName').value.toUpperCase();
+    }
+
+    function changeRating(val) {
+        const rate = document.getElementById('displayRating');
+        let current = parseInt(rate.innerText);
+        if(current < 110) rate.innerText = current + val;
+    }
+
+    function makeEpic() {
+        const card = document.getElementById('mainCard');
+        const rate = document.getElementById('displayRating');
+        card.classList.toggle('epic-mode');
+        if(card.classList.contains('epic-mode')) {
+            rate.innerText = "110";
+            alert("EPIC BASIM TAMAMLANDI! 110 REYTING!");
+        } else {
+            rate.innerText = "90";
         }
+    }
+</script>
 
-        function levelUp(name) {
-            const rElem = document.getElementById('r-' + name);
-            let current = parseInt(rElem.innerText);
-            if(current < 100) {
-                rElem.innerText = current + 1;
-            } else {
-                alert("Maximum Seviyeye Ulaşıldı!");
-            }
-        }
-
-        function specialEdition(btn, name) {
-            const card = btn.parentElement;
-            card.classList.toggle('special-edition');
-            const rElem = document.getElementById('r-' + name);
-            rElem.innerText = "101"; // Özel basım gücü!
-        }
-    </script>
 </body>
 </html>
-
