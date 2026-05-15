@@ -1,195 +1,157 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibevideo | Sadece En İyi Videolar</title>
+    <title>VibeStream | Baran Dizi Platformu</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #0a0e17; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
-        /* UYGULAMA ÇERÇEVESİ */
-        .app-container { max-width: 480px; height: 100vh; margin: 0 auto; position: relative; background: #000; display: flex; flex-direction: column; }
-
-        /* LOGO ALANI */
-        .app-header {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
-            padding: 15px; position: absolute; top: 0; left: 0; width: 100%; z-index: 20;
+        /* ÜST MENÜ (NAVBAR) */
+        .navbar {
             display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background: rgba(10, 14, 23, 0.95);
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+            border-bottom: 1px solid #1a2333;
         }
-        .logo { font-size: 24px; font-weight: 900; background: linear-gradient(45deg, #ff007f, #7928ca); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
-        .live-badge { background: #ef4444; color: white; padding: 3px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; animation: blink 1.5s infinite; }
-        @keyframes blink { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        .logo { font-size: 26px; font-weight: 900; color: #e50914; letter-spacing: -1px; }
+        .logo span { color: #00ffcc; }
+        .menu-items { display: flex; gap: 20px; list-style: none; font-size: 14px; color: #bbb; }
+        .menu-items li { cursor: pointer; transition: 0.3s; }
+        .menu-items li:hover { color: #fff; }
 
-        /* INSTAGRAM TARZI HİKAYELER */
-        .stories-container { display: flex; gap: 12px; padding: 60px 10px 10px 10px; overflow-x: auto; background: rgba(0,0,0,0.85); border-bottom: 1px solid #111; z-index: 10; scrollbar-width: none; }
-        .stories-container::-webkit-scrollbar { display: none; }
-        .story { display: flex; flex-direction: column; align-items: center; font-size: 11px; min-width: 65px; cursor: pointer; }
-        .story-avatar { width: 54px; height: 54px; border-radius: 50%; border: 3px solid #ff007f; padding: 2px; background: #000; object-fit: cover; }
-        .story span { margin-top: 4px; color: #ccc; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* ÖNE ÇIKAN BÜYÜK DİZİ (HERO BANNER) */
+        .hero {
+            height: 55vh; background: linear-gradient(to top, #0a0e17 10%, rgba(10,14,23,0) 80%), url('https://picsum.photos/id/1015/1200/600') no-repeat center center/cover;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 0 5% 40px 5%; margin-top: 60px;
+        }
+        .hero-title { font-size: 38px; font-weight: 800; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .hero-meta { display: flex; gap: 15px; font-size: 13px; color: #00ffcc; margin-bottom: 15px; font-weight: bold; }
+        .hero-meta span.imdb { background: #f5c518; color: #000; padding: 2px 6px; border-radius: 4px; }
+        .hero-desc { max-width: 500px; font-size: 14px; color: #cccccc; line-height: 1.5; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+        .play-btn { background: #fff; color: #000; border: none; padding: 10px 25px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s; display: inline-block; width: fit-content; }
+        .play-btn:hover { background: #e50914; color: #fff; }
 
-        /* TIKTOK TARZI REELS AKIŞI */
-        .feed { flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
-        .feed::-webkit-scrollbar { display: none; }
-
-        .video-card { width: 100%; height: calc(100vh - 130px); scroll-snap-align: start; position: relative; background: #111; display: flex; align-items: center; justify-content: center; }
-        .video-placeholder { width: 100%; height: 100%; object-fit: cover; }
-
-        /* ETKİLEŞİM PANELİ */
-        .side-bar { position: absolute; right: 12px; bottom: 80px; display: flex; flex-direction: column; align-items: center; gap: 18px; z-index: 5; }
-        .action-btn { display: flex; flex-direction: column; align-items: center; font-size: 12px; font-weight: bold; cursor: pointer; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
-        .action-icon { width: 42px; height: 42px; background: rgba(0, 0, 0, 0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 4px; transition: 0.2s; border: 1px solid #222; }
-        .action-icon:active { transform: scale(0.8); }
-
-        /* ALT BİLGİLER VE DÖNEN PLAK */
-        .video-footer { position: absolute; left: 16px; bottom: 20px; right: 80px; z-index: 5; text-align: left; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
-        .username { font-weight: bold; font-size: 15px; margin-bottom: 5px; display: flex; align-items: center; gap: 4px; }
-        .username::after { content: '✓'; background: #00bfff; color: #fff; font-size: 9px; padding: 1px 3px; border-radius: 50%; }
-        .description { font-size: 13px; color: #e5e7eb; margin-bottom: 8px; line-height: 1.4; }
+        /* DİZİ LİSTESİ SATIRI */
+        .content-section { padding: 30px 5% 0 5%; }
+        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #fff; border-left: 4px solid #e50914; padding-left: 10px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
         
-        .music-box { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #a1a1aa; }
-        .disc { width: 28px; height: 28px; background: radial-gradient(circle, #333 30%, #111 70%); border-radius: 50%; border: 2px solid #fff; animation: spin 4s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .show-card { background: #131a26; border-radius: 6px; overflow: hidden; cursor: pointer; transition: transform 0.3s, border 0.3s; border: 1px solid #1c273a; }
+        .show-card:hover { transform: scale(1.05); border-color: #00ffcc; }
+        .show-img { width: 100%; height: 200px; object-fit: cover; }
+        .show-info { padding: 10px; }
+        .show-name { font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+        .show-rating { font-size: 11px; color: #f5c518; font-weight: bold; }
 
-        /* KALP UÇURMA EFEKTİ */
-        .heart-pop { position: absolute; font-size: 80px; color: #ff007f; animation: popHeart 0.8s ease-out forwards; pointer-events: none; opacity: 0; z-index: 10; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        @keyframes popHeart {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.3); opacity: 1; }
-            100% { transform: scale(1); opacity: 0; transform: translateY(-50px); }
-        }
+        /* SİNEMA SEYRETME PANELİ (MODAL) */
+        .video-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; align-items: center; justify-content: center; }
+        .modal-content { width: 90%; max-width: 700px; background: #131a26; border-radius: 8px; border: 1px solid #00ffcc; padding: 15px; position: relative; }
+        .close-modal { position: absolute; top: -35px; right: 0; color: #fff; font-size: 24px; cursor: pointer; font-weight: bold; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 4px; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+    <nav class="navbar">
+        <div class="logo">Vibe<span>Stream</span></div>
+        <ul class="menu-items">
+            <li>Ana Sayfa</li>
+            <li>Diziler</li>
+            <li>Trendler</li>
+        </ul>
+    </nav>
 
-    <div class="app-header">
-        <div class="logo">Vibevideo</div>
-        <div class="live-badge">CANLI</div>
+    <div class="hero" id="heroBanner">
+        <h1 class="hero-title" id="heroTitle">Kurtlar Vadisi</h1>
+        <div class="hero-meta">
+            <span class="imdb">IMDb 9.1</span>
+            <span>2003</span>
+            <span>97 Bölüm</span>
+        </div>
+        <p class="hero-desc" id="heroDesc">"Bu bir mafya dizisidir." Türkiye'nin gelmiş geçmiş en derin ve unutulmaz efsanesi şimdi tüm bölümleriyle tek parça.</p>
+        <button class="play-btn" onclick="openPlayer('dQw4w9WgXcQ')">▶ Hemen İzle</button>
     </div>
 
-    <div class="stories-container">
-        <div class="story">
-            <img src="https://picsum.photos/id/1025/100/100" class="story-avatar" style="border-color: #555;">
-            <span>Profilim</span>
-        </div>
-        <div class="story">
-            <img src="https://picsum.photos/id/64/100/100" class="story-avatar">
-            <span>efootball_vibe</span>
-        </div>
-        <div class="story">
-            <img src="https://picsum.photos/id/1062/100/100" class="story-avatar">
-            <span>baran.reels</span>
-        </div>
-        <div class="story">
-            <img src="https://picsum.photos/id/338/100/100" class="story-avatar">
-            <span>kesfet.tv</span>
-        </div>
+    <div class="content-section">
+        <div class="section-title">Popüler Diziler</div>
+        <div class="grid-container" id="showsGrid"></div>
     </div>
 
-    <div class="feed" id="feed">
-        <div class="video-card" onclick="triggerHeartPop(event)">
-            <img src="https://picsum.photos/id/237/450/800" class="video-placeholder">
-            <div class="side-bar">
-                <div class="action-btn" onclick="toggleLike(this)">
-                    <div class="action-icon">❤️</div>
-                    <span class="count">24.5K</span>
-                </div>
-                <div class="action-btn">
-                    <div class="action-icon">💬</div>
-                    <span>842</span>
-                </div>
-                <div class="action-btn">
-                    <div class="action-icon">✨</div>
-                    <span>Vibe</span>
-                </div>
+    <div class="video-modal" id="videoModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePlayer()">✕ Kapat</span>
+            <div class="video-wrapper">
+                <iframe id="videoPlayer" src="" allowfullscreen></iframe>
             </div>
-            <div class="video-footer">
-                <div class="username">baransvnn</div>
-                <div class="description">Vibevideo platformunun ilk resmi test videosu! Çift tıklayarak kalpleri uçurun 🚀🔥 #vibevideo #socialmedia #new</div>
-                <div class="music-box">
-                    <div class="disc"></div>
-                    <span>Vibevideo Orijinal Ses - Baran</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="video-card" onclick="triggerHeartPop(event)">
-            <img src="https://picsum.photos/id/433/450/800" class="video-placeholder">
-            <div class="side-bar">
-                <div class="action-btn" onclick="toggleLike(this)">
-                    <div class="action-icon">❤️</div>
-                    <span class="count">18.2K</span>
-                </div>
-                <div class="action-btn">
-                    <div class="action-icon">💬</div>
-                    <span>511</span>
-                </div>
-                <div class="action-btn">
-                    <div class="action-icon">✨</div>
-                    <span>Vibe</span>
-                </div>
-            </div>
-            <div class="video-footer">
-                <div class="username">eFootball_Dunyasi</div>
-                <div class="description">Özel basım kart tasarımları yakında sadece Vibevideo'da paylaşılacak. Takipte kalın! ⚽💎 #gaming</div>
-                <div class="music-box">
-                    <div class="disc"></div>
-                    <span>Global Trend Music (Remix)</span>
-                </div>
-            </div>
+            <h3 id="modalVideoTitle" style="margin-top: 15px; font-size: 16px; color: #00ffcc;">Dizi İzleniyor...</h3>
         </div>
     </div>
 
-</div>
+    <script>
+        // Platformdaki Dizilerin Listesi (Buraya istediğin diziyi ekleyebilirsin)
+        const showsData = [
+            { name: "Kurtlar Vadisi", year: 2003, imdb: "9.1", desc: '"Bu bir mafya dizisidir." Türkiye\'nin gelmiş geçmiş en derin efsanesi tüm bölümleriyle burada.', img: "https://picsum.photos/id/1015/300/400", videoId: "dQw4w9WgXcQ" },
+            { name: "Breaking Bad", year: 2008, imdb: "9.5", desc: "Kimya öğretmeninin imparatorluğa dönüşen tehlikeli ve karanlık hikayesi.", img: "https://picsum.photos/id/1069/300/400", videoId: "HhesaQXLuRY" },
+            { name: "Prison Break", year: 2005, imdb: "8.3", desc: "Kardeşini hapisten kaçırmak için tüm vücuduna haritayı dövmeleten dahi bir adam.", img: "https://picsum.photos/id/1043/300/400", videoId: "AL9zLctatJa" },
+            { name: "Game of Thrones", year: 2011, imdb: "9.2", desc: "Taht kavgaları, ejderhalar ve duvarın arkasındaki gizemli tehlike.", img: "https://picsum.photos/id/1022/300/400", videoId: "KPLWWIOCOOQ" }
+        ];
 
-<script>
-    function toggleLike(btn) {
-        const icon = btn.querySelector('.action-icon');
-        const countSpan = btn.querySelector('.count');
-        let count = parseFloat(countSpan.innerText);
-
-        if(icon.style.color === 'rgb(255, 0, 127)' || icon.style.color === 'red') {
-            icon.style.color = '#fff';
-            icon.style.borderColor = '#222';
-            countSpan.innerText = (count - 0.1).toFixed(1) + "K";
-        } else {
-            icon.style.color = '#ff007f';
-            icon.style.borderColor = '#ff007f';
-            countSpan.innerText = (count + 0.1).toFixed(1) + "K";
+        // Dizileri Ekrana Dizme
+        function loadShows() {
+            const grid = document.getElementById('showsGrid');
+            grid.innerHTML = "";
+            
+            showsData.forEach((show, index) => {
+                grid.innerHTML += `
+                    <div class="show-card" onclick="selectShow(${index})">
+                        <img src="${show.img}" class="show-img">
+                        <div class="show-info">
+                            <div class="show-name">${show.name}</div>
+                            <div class="show-rating">⭐ ${show.imdb}</div>
+                        </div>
+                    </div>
+                `;
+            });
         }
-    }
 
-    let lastTap = 0;
-    function triggerHeartPop(e) {
-        const now = Date.now();
-        if ((now - lastTap) < 300) {
-            const card = e.currentTarget;
-            const heart = document.createElement('div');
-            heart.className = 'heart-pop';
-            heart.innerHTML = '❤️';
+        // Alttaki dizilerden birine tıklayınca yukarıdaki büyük afişi değiştirir
+        function selectShow(index) {
+            const show = showsData[index];
+            document.getElementById('heroTitle').innerText = show.name;
+            document.getElementById('heroDesc').innerText = show.desc;
             
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left - 40;
-            const y = e.clientY - rect.top - 40;
-            heart.style.left = x + 'px';
-            heart.style.top = y + 'px';
+            // Meta bilgilerini ve oynat butonunu güncelle
+            const hero = document.getElementById('heroBanner');
+            hero.style.backgroundImage = `linear-gradient(to top, #0a0e17 10%, rgba(10,14,23,0) 80%), url('${show.img}')`;
             
-            card.appendChild(heart);
-            
-            const likeBtn = card.querySelector('.action-btn');
-            const icon = likeBtn.querySelector('.action-icon');
-            if(icon.style.color !== 'rgb(255, 0, 127)' && icon.style.color !== 'red') {
-                toggleLike(likeBtn);
-            }
-
-            setTimeout(() => { heart.remove(); }, 800);
+            const btn = hero.querySelector('.play-btn');
+            btn.onclick = () => openPlayer(show.videoId, show.name);
         }
-        lastTap = now;
-    }
-</script>
 
+        // Sinema Modunu Açma (Video Başlatma)
+        function openPlayer(videoId, title) {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+            document.getElementById('modalVideoTitle').innerText = title + " - 1. Bölüm İzleniyor";
+            
+            // YouTube gömme linkini aktifleştiriyoruz
+            player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            modal.style.display = 'flex';
+        }
+
+        // Sinema Modunu Kapatma
+        function closePlayer() {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+            player.src = ""; // Videoyu durdurmak için adresi sıfırlıyoruz
+            modal.style.display = 'none';
+        }
+
+        window.onload = loadShows;
+    </script>
 </body>
 </html>
-
