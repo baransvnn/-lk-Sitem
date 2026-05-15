@@ -3,52 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUBG NAME PRO MAX | Baran</title>
+    <title>eFootball Pro Panel | Baran</title>
     <style>
-        body { background: #050505; color: #f3ae1a; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 10px; margin: 0; }
-        .container { background: #111; border: 2px solid #f3ae1a; border-radius: 15px; padding: 20px; max-width: 450px; margin: 20px auto; box-shadow: 0 0 30px rgba(243, 174, 26, 0.2); }
-        h1 { font-size: 24px; margin-bottom: 15px; text-transform: uppercase; color: #f3ae1a; text-shadow: 2px 2px #000; }
-        input { width: 90%; padding: 15px; border-radius: 10px; border: 2px solid #333; font-size: 18px; margin-bottom: 20px; text-align: center; background: #000; color: #fff; box-sizing: border-box; }
-        input:focus { border-color: #f3ae1a; outline: none; }
-        #results { display: grid; grid-template-columns: 1fr; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 5px; }
-        #results::-webkit-scrollbar { width: 5px; }
-        #results::-webkit-scrollbar-thumb { background: #f3ae1a; border-radius: 10px; }
-        .result-item { background: #1d1d1d; padding: 18px; border-radius: 10px; cursor: pointer; transition: 0.2s; color: white; font-size: 19px; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .result-item:hover { border-color: #f3ae1a; background: #252525; }
-        .result-item:active { background: #f3ae1a; color: #000; }
-        .copy-btn { font-size: 11px; background: #f3ae1a; color: #000; padding: 4px 10px; border-radius: 5px; font-weight: bold; text-transform: uppercase; }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #00ff00; color: black; padding: 12px 25px; border-radius: 30px; display: none; font-weight: bold; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        body { background: #000428; background: linear-gradient(to right, #004e92, #000428); color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
+        .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+        .player-card { background: linear-gradient(45deg, #ffd700, #b8860b); color: black; border-radius: 10px; width: 140px; padding: 10px; border: 3px solid #fff; box-shadow: 0 0 15px rgba(255,255,255,0.3); position: relative; }
+        .rating { font-size: 24px; font-weight: bold; position: absolute; top: 5px; left: 5px; }
+        .position { font-size: 14px; font-weight: bold; position: absolute; top: 5px; right: 5px; background: black; color: white; padding: 2px 5px; border-radius: 4px; }
+        .name { margin-top: 30px; font-weight: bold; font-size: 16px; }
+        .power-up { background: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 10px; padding: 5px; font-weight: bold; }
+        .special-edition { background: linear-gradient(45deg, #ff00ff, #00ffff) !important; animation: glow 1s infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 5px #fff; } to { box-shadow: 0 0 20px #00ffff; } }
+        .controls { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        select, input { padding: 10px; border-radius: 5px; border: none; margin: 5px; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>🔫 PUBG NAME PRO MAX </h1>
-    <input type="text" id="nameInput" placeholder="İsmini yaz, efsaneleş..." oninput="generateNames()">
-    <div id="results"><p style="color: #888;">Yüzlerce şekil seni bekliyor!</p></div>
-</div>
-<div id="toast" class="toast">KOPYALANDI! ✅</div>
-<div style="margin-bottom:30px; font-size:13px; color:#f3ae1a; font-weight:bold;">POWERED BY BARAN</div>
-<script>
-    function copyToClipboard(text) {
-        const tempInput = document.createElement("input");
-        tempInput.value = text;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-        const toast = document.getElementById('toast');
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 1500);
-    }
-    function generateNames() {
-        const val = document.getElementById('nameInput').value;
-        const results = document.getElementById('results');
-        if(!val) { results.innerHTML = "<p style='color:#888;'>İsmini yazınca burada belirecekler...</p>"; return; }
-        const patterns = [
-            `〆${val}〆`, `气${val}气`, `꧁${val}꧂`, `亗『${val}』亗`, `父${val}父`, `⦇${val}⦈`, `★${val}★`, `乡${val}乡`, `iM・${val}`, `主${val}主`, `𓆩${val}𓆪`, `⎈${val}⎈`, `『${val}』ツ`, `♛${val}♛`, `⚚${val}⚚`, `×${val}×`, `々${val}々`, `☬${val}☬`, `亗${val}亗`, `꧁ঔ${val}ঔ꧂`, `⪻${val}⪼`, `【${val}】`, `〖${val}〗`, `❮${val}❯`, `☾${val}☽`, `☯${val}☯`, `⚔${val}⚔`, `⚒${val}⚒`, `🛡${val}🛡`, `🦅${val}🦅`, `🔥${val}🔥`, `⚡${val}⚡`, `💀${val}💀`, `😈${val}😈`, `👽${val}👽`, `〆${val}〆Gamer`, `亗${val}・King`, `『${val}』OFFICIAL`, `꧁${val}꧂_Pro`, `⪻${val}⪼_YT`, `Dark_${val}_〆`, `Legend_${val}_气`, `Alpha_${val}亗`
-        ];
-        results.innerHTML = patterns.map(s => `<div class="result-item" onclick="copyToClipboard('${s}')"><span>${s}</span><div class="copy-btn">KOPYALA</div></div>`).join('');
-    }
-</script>
+
+    <h1>⚽ eFOOTBALL KADRO PANELİ ⚽</h1>
+
+    <div class="controls">
+        <input type="text" id="pName" placeholder="Oyuncu Adı">
+        <select id="pPos">
+            <option value="KL">KL</option>
+            <option value="STP">STP</option>
+            <option value="GO">GO</option>
+            <option value="SNT">SNT</option>
+        </select>
+        <button onclick="addPlayer()" style="padding: 10px; background: green; color: white; border: none; border-radius: 5px;">Kadroya Ekle</button>
+    </div>
+
+    <div class="card-container" id="team">
+        </div>
+
+    <script>
+        function addPlayer() {
+            const name = document.getElementById('pName').value;
+            const pos = document.getElementById('pPos').value;
+            if(!name) return;
+
+            const team = document.getElementById('team');
+            const card = document.createElement('div');
+            card.className = 'player-card';
+            card.innerHTML = `
+                <div class="rating" id="r-${name}">85</div>
+                <div class="position">${pos}</div>
+                <div class="name">${name}</div>
+                <button class="power-up" onclick="levelUp('${name}')">SEVİYE ATLAT</button>
+                <button class="power-up" style="background:blue;" onclick="specialEdition(this, '${name}')">ÖZEL BASIM</button>
+            `;
+            team.appendChild(card);
+            document.getElementById('pName').value = "";
+        }
+
+        function levelUp(name) {
+            const rElem = document.getElementById('r-' + name);
+            let current = parseInt(rElem.innerText);
+            if(current < 100) {
+                rElem.innerText = current + 1;
+            } else {
+                alert("Maximum Seviyeye Ulaşıldı!");
+            }
+        }
+
+        function specialEdition(btn, name) {
+            const card = btn.parentElement;
+            card.classList.toggle('special-edition');
+            const rElem = document.getElementById('r-' + name);
+            rElem.innerText = "101"; // Özel basım gücü!
+        }
+    </script>
 </body>
 </html>
+
