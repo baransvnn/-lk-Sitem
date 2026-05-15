@@ -19,17 +19,14 @@
         .header h1 { font-size: 28px; font-weight: 800; color: #111; letter-spacing: -0.5px; text-align: center; }
         .header p { color: #666; font-size: 13px; margin-top: 2px; text-align: center; }
 
-        /* ARAMA DURUM PANELİ */
         .calling-screen { display: none; background: #ffe3e3; border: 1px solid #ff4a4a; color: #d60000; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; margin: 15px 0; text-align: center; animation: pulse 1.2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        /* MERKEZİ SOHBET EKRANI */
         .display-area { flex: 1; background: #f7f9fa; border: 1px solid #e1e8ed; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
         .status { font-size: 12px; font-weight: bold; color: #5b7083; text-transform: uppercase; letter-spacing: 0.5px; }
         .transcript { font-size: 15px; color: #555; font-style: italic; }
         .ai-response { font-size: 18px; color: #111; font-weight: 600; line-height: 1.4; }
 
-        /* SABİT ALT GİRİŞ PANELI */
         .bottom-panel { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; border-top: 1px solid #e1e8ed; padding: 15px; z-index: 100; display: flex; gap: 10px; align-items: center; }
         .mic-circle-btn { width: 46px; height: 46px; background: #007aff; color: white; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.2s; }
         .mic-circle-btn.listening { background: #ff3b30; animation: blink 1s infinite; }
@@ -95,7 +92,6 @@
             inputElem.value = "";
         }
 
-        // SESLİ ÇALDIRMA TETİKLEYİCİSİ
         function triggerCall(targetName) {
             const callingScreen = document.getElementById('callingScreen');
             let reply = `Anlaşıldı Baran. Hat aranıyor, ${targetName} şu an çaldırılıyor...`;
@@ -112,13 +108,11 @@
             }, 5000);
         }
 
-        // ANA EMİR KONTROL MERKEZİ
         function executeMatrixCore(cmd) {
             const callingScreen = document.getElementById('callingScreen');
             callingScreen.style.display = "none";
             let reply = "";
 
-            // Birini çaldırma emri gelirse (Örn: acunu çaldır)
             if (cmd.includes("çaldır") || cmd.includes("ara")) {
                 let name = cmd.replace("çaldır", "").replace("ara", "").trim();
                 if(name == "") name = "Bilinmeyen Numara";
@@ -126,7 +120,6 @@
                 return;
             }
 
-            // Uygulama Tetikleme (Sadece bunu aç deyince gider)
             if (cmd.endsWith("aç") || cmd.includes("aç ")) {
                 let appName = cmd.replace("aç", "").trim();
                 reply = `${appName.toUpperCase()} açılıyor Baran.`;
@@ -142,7 +135,6 @@
                 return;
             }
 
-            // Kendi İçinde Cevaplama Alanı (Google'a kesinlikle atmaz)
             if (cmd.includes("nasılsın")) {
                 reply = "Çok iyiyim Baran. Gözü ve rehberi kaldırıp arayüzü tamamen senin istediğin gibi sade ve bembeyaz yaptım. Dinliyorum.";
             } else if (cmd.includes("baran kim")) {
@@ -165,3 +157,4 @@
     </script>
 </body>
 </html>
+
