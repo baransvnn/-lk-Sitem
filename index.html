@@ -10,8 +10,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1hdHJpeCBBSSIsCiAgInNob3J0X25hbWUiOiAiTWF0cml4IiwKICAic3RhcnRfdXJsIjogIi8tbGstU2l0ZW0vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAidGhlbWVfY29sb3IiOiAiI2ZmZmZmZiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImh0dHBzOi8vaS5pYmIuY28vS3czclB4Vy9NYXRyaXgtTUFJLUIucG5nIiwKICAiY2hpcHMiOiAibWF0cml4LWxvZ28iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0==">
-
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: #ffffff; color: #111111; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; height: 100vh; padding: 30px 20px 90px 20px; }
@@ -22,8 +20,7 @@
         .calling-screen { display: none; background: #ffe3e3; border: 1px solid #ff4a4a; color: #d60000; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; margin: 15px 0; text-align: center; animation: pulse 1.2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        /* SADE, BEYAZ VE NET DIALOG ALANI */
-        .display-area { flex: 1; background: #f7f9fa; border: 1px solid #e1e8ed; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+        .display-area { flex: 1; background: #f7f9fa; border: 1px solid #e1e8ed; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 10px; overflow-y: auto; }
         .status { font-size: 12px; font-weight: bold; color: #007aff; text-transform: uppercase; letter-spacing: 0.5px; }
         .transcript { font-size: 15px; color: #555; font-style: italic; }
         .ai-response { font-size: 18px; color: #111; font-weight: 600; line-height: 1.4; }
@@ -50,7 +47,7 @@
     <div class="display-area">
         <div class="status" id="statusText">Sistem Durumu: Çevrimiçi</div>
         <div class="transcript" id="userSpeech">"Komutun veya sorun burada çözümlenecek..."</div>
-        <div class="ai-response" id="aiReply">Matrix AI hazır Baran. İstediğin uygulamayı açabilirim veya sorduğun sorulara anında cevap verebilirim. Yönlendirmeler tamamen kaldırıldı.</div>
+        <div class="ai-response" id="aiReply">Matrix AI aktif Baran. İstediğin tüm uygulamaları doğrudan açabilirim ve sordun her soruya anında canlı cevap üretebilirim. Dinliyorum şef.</div>
     </div>
 
     <div class="bottom-panel">
@@ -62,7 +59,7 @@
     </div>
 
     <script>
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSynthesisSpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition;
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
@@ -93,102 +90,82 @@
             inputElem.value = "";
         }
 
-        function triggerCall(targetName) {
-            const callingScreen = document.getElementById('callingScreen');
-            let reply = `${targetName} aranıyor Baran.`;
+        // TELEFONDAKİ UYGULAMALARI DOĞRUDAN TETİKLEYEN DERİN BAĞLANTI MOTORU
+        function launchDirectApp(appName) {
+            let reply = `${appName.toUpperCase()} uygulaması doğrudan telefondan başlatılıyor Baran.`;
             document.getElementById('aiReply').innerText = reply;
             speak(reply);
 
-            callingScreen.innerText = `📞 ${targetName.toUpperCase()} ÇALDIRILIYOR...`;
-            callingScreen.style.display = "block";
-            
             setTimeout(() => {
-                callingScreen.style.display = "none";
-                document.getElementById('aiReply').innerText = `Arama kapatıldı Baran.`;
-                speak("Arama kapatıldı.");
-            }, 4000);
+                if (appName.includes("instagram")) {
+                    // Instagram uygulamasını telefondan direkt uyandıran derin android bağı
+                    window.location.href = "intent://instagram.com/#Intent;package=com.instagram.android;scheme=https;end";
+                } else if (appName.includes("tiktok")) {
+                    window.location.href = "intent://tiktok.com/#Intent;package=com.zhiliaoapp.musically;scheme=https;end";
+                } else if (appName.includes("youtube")) {
+                    window.location.href = "intent://youtube.com/#Intent;package=com.google.android.youtube;scheme=https;end";
+                } else if (appName.includes("pubg")) {
+                    window.location.href = "android-app://com.tencent.ig";
+                } else if (appName.includes("facebook")) {
+                    window.location.href = "intent://facebook.com/#Intent;package=com.facebook.katana;scheme=https;end";
+                } else if (appName.includes("spotify")) {
+                    window.location.href = "intent://open.spotify.com/#Intent;package=com.spotify.music;scheme=https;end";
+                } else if (appName.includes("whatsapp")) {
+                    window.location.href = "intent://whatsapp.com/#Intent;package=com.whatsapp;scheme=https;end";
+                } else {
+                    // Diğer uygulamalar için genel standart tarayıcı dışı sistem tetiklemesi
+                    window.location.href = `intent://${appName}.com/#Intent;package=com.${appName};scheme=https;end`;
+                }
+            }, 1000);
         }
 
-        // GELİŞMİŞ EVRENSEL UYGULAMA AÇMA VE ANINDA SORU-CEVAP MOTORU
+        // CANLI CEVAP VE ARAMA MOTORU INTEGRASYONU
         function executeMatrixCore(cmd) {
-            const callingScreen = document.getElementById('callingScreen');
-            callingScreen.style.display = "none";
-            let reply = "";
-
-            // 1. ÇALDIRMA / ARAMA EMİRLERİ
-            if (cmd.includes("çaldır") || cmd.includes("ara")) {
-                let name = cmd.replace("çaldır", "").replace("ara", "").trim();
-                if(name == "") name = "Bilinmeyen";
-                triggerCall(name);
-                return;
-            }
-
-            // 2. KESİN VE EVRENSEL UYGULAMA AÇMA MOTORU (ASLA GOOGLE'A ATMAZ)
+            // Uygulama açma kontrolü
             if (cmd.endsWith("aç") || cmd.includes("aç ") || cmd.startsWith("aç")) {
-                let cleanAppName = cmd.replace("aç", "").replace("uygulamasını", "").replace("uygulaması", "").trim();
-                
-                // Boşlukları temizleme (Örn: "pubg mobile" -> "pubgmobile")
-                let urlName = cleanAppName.replace(/\s+/g, '');
-
-                if (urlName === "") {
-                    reply = "Hangi uygulamayı açmamı istiyorsun Baran?";
-                    document.getElementById('aiReply').innerText = reply;
-                    speak(reply);
+                let appName = cmd.replace("aç", "").replace("uygulamasını", "").replace("uygulaması", "").trim();
+                if (appName !== "") {
+                    launchDirectApp(appName);
                     return;
                 }
-
-                reply = `${cleanAppName.toUpperCase()} uygulamasını doğrudan başlatıyorum Baran.`;
-                document.getElementById('aiReply').innerText = reply;
-                speak(reply);
-
-                setTimeout(() => {
-                    if (urlName.includes("pubg")) {
-                        window.location.href = "https://www.pubgmobile.com";
-                    } else if (urlName.includes("tiktok")) {
-                        window.location.href = "https://www.tiktok.com";
-                    } else if (urlName.includes("youtube")) {
-                        window.location.href = "https://www.youtube.com";
-                    } else if (urlName.includes("instagram")) {
-                        window.location.href = "https://www.instagram.com";
-                    } else if (urlName.includes("facebook")) {
-                        window.location.href = "https://www.facebook.com";
-                    } else if (urlName.includes("spotify")) {
-                        window.location.href = "https://www.spotify.com";
-                    } else if (urlName.includes("twitter") || urlName.includes(" x ")) {
-                        window.location.href = "https://www.x.com";
-                    } else {
-                        // Söylediğin herhangi bir diğer uygulamanın doğrudan .com sitesini açar
-                        window.location.href = `https://www.${urlName}.com`;
-                    }
-                }, 1000);
-                return;
             }
 
-            // 3. ANINDA, NET VE DOLANDIRMADAN VERİLEN CEVAPLAR
+            // Temel sabit komutlar
             if (cmd.includes("nasılsın")) {
-                reply = "Çok iyiyim Baran, sistem tamamen sorunsuz ve hızlı çalışıyor. Sen nasılsın?";
-            } else if (cmd.includes("baran kim") || cmd.includes("ben kimim")) {
-                reply = "Sen bu sistemin ve Matrix AI projesinin kurucusu Baran Pro'sun.";
-            } else if (cmd.includes("selam") || cmd.includes("merhaba")) {
-                reply = "Selam Baran! Emrindeyim, ne yapmamı istersin?";
-            } else if (cmd.includes("hava")) {
-                reply = "Hava durumunu yerel ağlar üzerinden kontrol ettim Baran, şu an sistem stabil.";
-            } else if (cmd.includes("efootball") || cmd.includes("kadro")) {
-                reply = "eFootball kadron için en ideal ve en yüksek seviyeli taktiksel diziliş hazırlandı Baran.";
-            } else if (cmd.includes("saat kaç") || cmd.includes("saat")) {
-                let simdi = new Date();
-                reply = `Şu an saat tam ${simdi.getHours()}:${simdi.getMinutes().toString().padStart(2, '0')} Baran.`;
-            } else {
-                // Sorduğun diğer tüm özel sorulara doğrudan ekranda anında üretilen net cevap
-                reply = `"${cmd}" sorunun cevabını senin için doğrudan Matrix işlemcimde çözdüm Baran. Google araması tamamen devre dışı bırakıldı.`;
+                let reply = "Çok iyiyim Baran! Tüm logoları kaldırdım, sistemi tamamen hızlandırdım. Emrindeyim şef.";
+                document.getElementById('aiReply').innerText = reply; speak(reply); return;
+            }
+            if (cmd.includes("baran kim") || cmd.includes("ben kimim")) {
+                let reply = "Sen bu Matrix yazılımının kurucusu ve komutanı Baran Pro'sun.";
+                document.getElementById('aiReply').innerText = reply; speak(reply); return;
             }
 
-            document.getElementById('aiReply').innerText = reply;
-            speak(reply);
+            // CANLI SORULAR İÇİN (ÇEYREK ALTIN VB.) KESİNTİSİZ WEB SORGULAMA BEYNİ
+            document.getElementById('statusText').innerText = "Matrix: Düşünüyor...";
+            document.getElementById('aiReply').innerText = "Canlı veritabanı sorgulanıyor, anında cevap getiriyorum Baran...";
+            
+            // Google veya canlı veri çekme servislerine yönlenen ve asla donmayan akıllı fallback sistemi
+            setTimeout(() => {
+                let searchUrl = `https://www.google.com/search?q=${encodeURIComponent(cmd)}`;
+                document.getElementById('statusText').innerText = "Matrix: Cevap Bulundu";
+                
+                if (cmd.includes("altın") || cmd.includes("çeyrek") || cmd.includes("dolar") || cmd.includes("fiyat")) {
+                    let replyText = `"${cmd.toUpperCase()}" için canlı piyasa verilerini ve anlık fiyat grafiklerini senin için ekrana getiriyorum Baran şef.`;
+                    document.getElementById('aiReply').innerText = replyText;
+                    speak(replyText);
+                    setTimeout(() => { window.location.href = searchUrl; }, 1500);
+                } else {
+                    let replyText = `"${cmd}" sorunu genel bilgi ağı üzerinde sorguladım Baran. Detaylı bilgileri anında ekrana yansıtıyorum.`;
+                    document.getElementById('aiReply').innerText = replyText;
+                    speak(replyText);
+                    setTimeout(() => { window.location.href = searchUrl; }, 1500);
+                }
+            }, 1200);
         }
 
         function speak(text) {
             if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Önceki sesleri kes
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'tr-TR';
                 window.speechSynthesis.speak(utterance);
