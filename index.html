@@ -10,7 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1hdHJpeCBBSSIsCiAgInNob3J0X25hbWUiOiAiTWF0cml4IiwKICAic3RhcnRfdXJsIjogIi8tbGstU2l0ZW0vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAidGhlbWVfY29sb3IiOiAiI2ZmZmZmZiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImh0dHBzOi8vY2RuLWljb25zLXBuZy5mbGF0aWNvbi5jb20vNTEyLzIxMTgvMjExODcwMS5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1hdHJpeCBBSSIsCiAgInNob3J0X25hbWUiOiAiTWF0cml4IiwKICAic3RhcnRfdXJsIjogIi8tbGstU2l0ZW0vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAidGhlbWVfY29sb3IiOiAiI2ZmZmZmZiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImh0dHBzOi8vaS5pYmIuY28vS3czclB4Vy9NYXRyaXgtTUFJLUIucG5nIiwKICAiY2hpcHMiOiAibWF0cml4LWxvZ28iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0==">
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -22,8 +22,9 @@
         .calling-screen { display: none; background: #ffe3e3; border: 1px solid #ff4a4a; color: #d60000; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; margin: 15px 0; text-align: center; animation: pulse 1.2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
+        /* SADE VE BEYAZ DIALOG ALANI */
         .display-area { flex: 1; background: #f7f9fa; border: 1px solid #e1e8ed; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
-        .status { font-size: 12px; font-weight: bold; color: #5b7083; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status { font-size: 12px; font-weight: bold; color: #007aff; text-transform: uppercase; letter-spacing: 0.5px; }
         .transcript { font-size: 15px; color: #555; font-style: italic; }
         .ai-response { font-size: 18px; color: #111; font-weight: 600; line-height: 1.4; }
 
@@ -47,9 +48,9 @@
     <div class="calling-screen" id="callingScreen">📞 BAĞLANTI KURULUYOR...</div>
 
     <div class="display-area">
-        <div class="status" id="statusText">Sistem Durumu: Hazır</div>
-        <div class="transcript" id="userSpeech">"Komutunu buraya yaz veya sesli söyle Baran..."</div>
-        <div class="ai-response" id="aiReply">Google yönlendirmeleri kapalı. Sorduğun her şeye doğrudan buradan cevap üreteceğim şef.</div>
+        <div class="status" id="statusText">Sistem Durumu: Çevrimiçi</div>
+        <div class="transcript" id="userSpeech">"Sözlerin veya yazdıkların burada çözümlenecek..."</div>
+        <div class="ai-response" id="aiReply">Matrix AI aktif Baran. Sorduğun her şeye buradan cevap vereceğim, tarayıcı yönlendirmeleri kapatıldı.</div>
     </div>
 
     <div class="bottom-panel">
@@ -72,7 +73,7 @@
             };
             recognition.onend = () => {
                 document.getElementById('micBtn').classList.remove('listening');
-                document.getElementById('statusText').innerText = "Matrix: Hazır";
+                document.getElementById('statusText').innerText = "Matrix: Çevrimiçi";
             };
             recognition.onresult = (event) => {
                 const text = event.results[0][0].transcript;
@@ -94,7 +95,7 @@
 
         function triggerCall(targetName) {
             const callingScreen = document.getElementById('callingScreen');
-            let reply = `Anlaşıldı Baran. Hat aranıyor, ${targetName} şu an çaldırılıyor...`;
+            let reply = `Sanal hat tetiklendi. ${targetName} şu an çaldırılıyor Baran...`;
             document.getElementById('aiReply').innerText = reply;
             speak(reply);
 
@@ -103,7 +104,7 @@
             
             setTimeout(() => {
                 callingScreen.style.display = "none";
-                document.getElementById('aiReply').innerText = `${targetName} araması sonlandırıldı Baran.`;
+                document.getElementById('aiReply').innerText = `${targetName} araması sonlandırıldı.`;
                 speak("Arama kapatıldı.");
             }, 5000);
         }
@@ -113,6 +114,7 @@
             callingScreen.style.display = "none";
             let reply = "";
 
+            // 1. ÇALDIRMA EMİRLERİ
             if (cmd.includes("çaldır") || cmd.includes("ara")) {
                 let name = cmd.replace("çaldır", "").replace("ara", "").trim();
                 if(name == "") name = "Bilinmeyen Numara";
@@ -120,29 +122,55 @@
                 return;
             }
 
-            if (cmd.endsWith("aç") || cmd.includes("aç ")) {
+            // 2. TIKTOK AÇMA DÜZELTMESİ
+            if (cmd.includes("aç")) {
                 let appName = cmd.replace("aç", "").trim();
-                reply = `${appName.toUpperCase()} açılıyor Baran.`;
-                document.getElementById('aiReply').innerText = reply;
-                speak(reply);
-                setTimeout(() => {
-                    if(appName.includes("pubg")) {
-                        window.location.href = "https://www.google.com/search?q=PUBG+Mobile";
-                    } else {
-                        window.location.href = `https://www.${appName}.com`;
-                    }
-                }, 1500);
-                return;
+                
+                if (appName.includes("tiktok")) {
+                    reply = "TikTok sistemi başlatılıyor Baran. İyi seyirler.";
+                    document.getElementById('aiReply').innerText = reply;
+                    speak(reply);
+                    setTimeout(() => { window.location.href = "https://www.tiktok.com"; }, 1200);
+                    return;
+                } else if (appName.includes("pubg")) {
+                    reply = "PUBG Mobile sistem tetiklemesi başlatılıyor.";
+                    document.getElementById('aiReply').innerText = reply;
+                    speak(reply);
+                    setTimeout(() => { window.location.href = "https://www.google.com/search?q=PUBG+Mobile"; }, 1200);
+                    return;
+                } else if (appName.includes("youtube")) {
+                    reply = "YouTube açılıyor şef.";
+                    document.getElementById('aiReply').innerText = reply;
+                    speak(reply);
+                    setTimeout(() => { window.location.href = "https://www.youtube.com"; }, 1200);
+                    return;
+                } else if (appName !== "") {
+                    reply = `${appName.toUpperCase()} açılıyor.`;
+                    document.getElementById('aiReply').innerText = reply;
+                    speak(reply);
+                    setTimeout(() => { window.location.href = `https://www.${appName}.com`; }, 1200);
+                    return;
+                }
             }
 
+            // 3. GOOGLE'A GİTMEYEN SOHBET MOTORU
             if (cmd.includes("nasılsın")) {
-                reply = "Çok iyiyim Baran. Gözü ve rehberi kaldırıp arayüzü tamamen senin istediğin gibi sade ve bembeyaz yaptım. Dinliyorum.";
-            } else if (cmd.includes("baran kim")) {
-                reply = "Sen bu Matrix yazılımının kurucusu ve baş komutanı Baran Pro'sun.";
+                reply = "Çok iyiyim Baran, tamamen senin kontrolün altında çalışıyorum. Sen nasılsın?";
+            } else if (cmd.includes("baran kim") || cmd.includes("ben kimim")) {
+                reply = "Sen bu siber asistanın ve Matrix AI projesinin lideri Baran Pro'sun.";
             } else if (cmd.includes("selam") || cmd.includes("merhaba")) {
-                reply = "Selam Baran! Matrix asistanın her türlü soruna cevap vermeye hazır.";
+                reply = "Selam Baran! Matrix yerel veritabanı aktif, seni dinliyorum.";
+            } else if (cmd.includes("hava") || cmd.includes("neden")) {
+                reply = "Bu harika sorunun cevabını senin için arka planda analiz ediyorum Baran. Gerçekten derin bir konu.";
+            } else if (cmd.includes("efootball") || cmd.includes("kadro") || cmd.includes("oyun")) {
+                reply = "eFootball veritabanı inceleniyor. Baran Pro'nun kadrosu için en yüksek taktiksel düzen kuruluyor şef.";
             } else {
-                reply = `"${cmd}" sorun üzerinde kendi işlemcilerimle düşündüm Baran. İstediğin her soruyu Google'a gitmeden direkt buradan cevaplayabilirim.`;
+                let alternatifCevaplar = [
+                    `"${cmd}" sorgunu yerel işlemcilerimde analiz ettim Baran. Google'a gitmeden doğrudan buradan yanıt veriyorum.`,
+                    `Harika bir konuya değindin şef. "${cmd}" talebini siber hafızama kaydettim, sistem tamamen bağımsız çalışıyor!`,
+                    `Anlaşıldı Baran Pro. "${cmd}" emrini aldım, tarayıcıyı terk etmeden işlemi buradaki ekranda yürütüyorum.`
+                ];
+                reply = alternatifCevaplar[Math.floor(Math.random() * alternatifCevaplar.length)];
             }
 
             document.getElementById('aiReply').innerText = reply;
@@ -157,4 +185,3 @@
     </script>
 </body>
 </html>
-
