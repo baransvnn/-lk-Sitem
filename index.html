@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG Havalı İsim Yapıcı | Baran</title>
+    <style>
+        body { background: #0a0a0a; color: #f3ae1a; font-family: 'Arial Black', sans-serif; text-align: center; padding: 20px; }
+        .container { background: #1a1a1a; border: 3px solid #f3ae1a; border-radius: 20px; padding: 30px; max-width: 500px; margin: auto; box-shadow: 0 0 20px #f3ae1a; }
+        h1 { font-size: 25px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        input { width: 80%; padding: 15px; border-radius: 10px; border: none; font-size: 18px; margin-bottom: 20px; text-align: center; }
+        .result-item { background: #2a2a2a; padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; transition: 0.3s; color: white; font-size: 20px; border: 1px solid #333; }
+        .result-item:hover { background: #f3ae1a; color: black; transform: scale(1.05); }
+        .footer { margin-top: 20px; font-size: 12px; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔫 PUBG İSİM GENERATOR 🔫</h1>
+    <input type="text" id="nameInput" placeholder="İsmini yaz..." oninput="generateNames()">
+    
+    <div id="results">
+        <p>Burada şekilli isimler görünecek...</p>
+    </div>
+    
+    <p style="font-size: 12px; color: #aaa;">İsme tıkla, (henüz kopyalamaz ama seçebilirsin!)</p>
+</div>
+
+<div class="footer">Created by Baran - 2026</div>
+
+<script>
+    function generateNames() {
+        const val = document.getElementById('nameInput').value;
+        const results = document.getElementById('results');
+        if(!val) { results.innerHTML = ""; return; }
+
+        const styles = [
+            `〆${val}〆`,
+            `气${val}气`,
+            `꧁${val}꧂`,
+            `亗『${val}』亗`,
+            `vE${val}z`,
+            `父${val}父`,
+            `⦇${val}⦈`,
+            `《${val}》`,
+            `×${val}×`,
+            `★${val}★`
+        ];
+
+        results.innerHTML = styles.map(s => `<div class="result-item">${s}</div>`).join('');
+    }
+</script>
+
+</body>
+</html>
