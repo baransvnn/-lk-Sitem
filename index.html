@@ -3,54 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUBG Havalı İsim Yapıcı | Baran</title>
+    <title>PUBG NAME PRO MAX | Baran</title>
     <style>
-        body { background: #0a0a0a; color: #f3ae1a; font-family: 'Arial Black', sans-serif; text-align: center; padding: 20px; }
-        .container { background: #1a1a1a; border: 3px solid #f3ae1a; border-radius: 20px; padding: 30px; max-width: 500px; margin: auto; box-shadow: 0 0 20px #f3ae1a; }
-        h1 { font-size: 25px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-        input { width: 80%; padding: 15px; border-radius: 10px; border: none; font-size: 18px; margin-bottom: 20px; text-align: center; }
-        .result-item { background: #2a2a2a; padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; transition: 0.3s; color: white; font-size: 20px; border: 1px solid #333; }
-        .result-item:hover { background: #f3ae1a; color: black; transform: scale(1.05); }
-        .footer { margin-top: 20px; font-size: 12px; opacity: 0.6; }
+        body { background: #050505; color: #f3ae1a; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 10px; margin: 0; }
+        .container { background: #111; border: 2px solid #f3ae1a; border-radius: 15px; padding: 20px; max-width: 450px; margin: 20px auto; box-shadow: 0 0 30px rgba(243, 174, 26, 0.2); }
+        h1 { font-size: 24px; margin-bottom: 15px; text-transform: uppercase; color: #f3ae1a; text-shadow: 2px 2px #000; }
+        input { width: 90%; padding: 15px; border-radius: 10px; border: 2px solid #333; font-size: 18px; margin-bottom: 20px; text-align: center; background: #000; color: #fff; box-sizing: border-box; }
+        input:focus { border-color: #f3ae1a; outline: none; }
+        #results { display: grid; grid-template-columns: 1fr; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 5px; }
+        #results::-webkit-scrollbar { width: 5px; }
+        #results::-webkit-scrollbar-thumb { background: #f3ae1a; border-radius: 10px; }
+        .result-item { background: #1d1d1d; padding: 18px; border-radius: 10px; cursor: pointer; transition: 0.2s; color: white; font-size: 19px; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .result-item:hover { border-color: #f3ae1a; background: #252525; }
+        .result-item:active { background: #f3ae1a; color: #000; }
+        .copy-btn { font-size: 11px; background: #f3ae1a; color: #000; padding: 4px 10px; border-radius: 5px; font-weight: bold; text-transform: uppercase; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #00ff00; color: black; padding: 12px 25px; border-radius: 30px; display: none; font-weight: bold; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h1>🔫 PUBG İSİM GENERATOR 🔫</h1>
-    <input type="text" id="nameInput" placeholder="İsmini yaz..." oninput="generateNames()">
-    
-    <div id="results">
-        <p>Burada şekilli isimler görünecek...</p>
-    </div>
-    
-    <p style="font-size: 12px; color: #aaa;">İsme tıkla, (henüz kopyalamaz ama seçebilirsin!)</p>
+    <h1>🔫 PUBG NAME PRO MAX </h1>
+    <input type="text" id="nameInput" placeholder="İsmini yaz, efsaneleş..." oninput="generateNames()">
+    <div id="results"><p style="color: #888;">Yüzlerce şekil seni bekliyor!</p></div>
 </div>
-
-<div class="footer">Created by Baran - 2026</div>
-
+<div id="toast" class="toast">KOPYALANDI! ✅</div>
+<div style="margin-bottom:30px; font-size:13px; color:#f3ae1a; font-weight:bold;">POWERED BY BARAN</div>
 <script>
+    function copyToClipboard(text) {
+        const tempInput = document.createElement("input");
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 1500);
+    }
     function generateNames() {
         const val = document.getElementById('nameInput').value;
         const results = document.getElementById('results');
-        if(!val) { results.innerHTML = ""; return; }
-
-        const styles = [
-            `〆${val}〆`,
-            `气${val}气`,
-            `꧁${val}꧂`,
-            `亗『${val}』亗`,
-            `vE${val}z`,
-            `父${val}父`,
-            `⦇${val}⦈`,
-            `《${val}》`,
-            `×${val}×`,
-            `★${val}★`
+        if(!val) { results.innerHTML = "<p style='color:#888;'>İsmini yazınca burada belirecekler...</p>"; return; }
+        const patterns = [
+            `〆${val}〆`, `气${val}气`, `꧁${val}꧂`, `亗『${val}』亗`, `父${val}父`, `⦇${val}⦈`, `★${val}★`, `乡${val}乡`, `iM・${val}`, `主${val}主`, `𓆩${val}𓆪`, `⎈${val}⎈`, `『${val}』ツ`, `♛${val}♛`, `⚚${val}⚚`, `×${val}×`, `々${val}々`, `☬${val}☬`, `亗${val}亗`, `꧁ঔ${val}ঔ꧂`, `⪻${val}⪼`, `【${val}】`, `〖${val}〗`, `❮${val}❯`, `☾${val}☽`, `☯${val}☯`, `⚔${val}⚔`, `⚒${val}⚒`, `🛡${val}🛡`, `🦅${val}🦅`, `🔥${val}🔥`, `⚡${val}⚡`, `💀${val}💀`, `😈${val}😈`, `👽${val}👽`, `〆${val}〆Gamer`, `亗${val}・King`, `『${val}』OFFICIAL`, `꧁${val}꧂_Pro`, `⪻${val}⪼_YT`, `Dark_${val}_〆`, `Legend_${val}_气`, `Alpha_${val}亗`
         ];
-
-        results.innerHTML = styles.map(s => `<div class="result-item">${s}</div>`).join('');
+        results.innerHTML = patterns.map(s => `<div class="result-item" onclick="copyToClipboard('${s}')"><span>${s}</span><div class="copy-btn">KOPYALA</div></div>`).join('');
     }
 </script>
-
 </body>
 </html>
