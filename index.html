@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Matrix Pay</title>
+    <title>Matrix AI</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -11,238 +11,153 @@
     <meta name="theme-color" content="#ffffff">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; outline: none; }
-        body { background: #ffffff; color: #111111; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #ffffff; color: #111111; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; height: 100vh; padding: 30px 20px 90px 20px; }
 
-        /* GİRİŞ EKRANI (PIN) */
-        #pinScreen { position: fixed; top:0; left:0; width:100%; height:100%; background:#ffffff; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
-        .pin-title { font-size: 22px; font-weight: 700; margin-bottom: 5px; }
-        .pin-sub { font-size: 13px; color: #666; margin-bottom: 30px; }
-        .pin-dots { display: flex; gap: 15px; margin-bottom: 40px; }
-        .dot { width: 16px; height: 16px; border: 2px solid #007aff; border-radius: 50%; transition: 0.2s; }
-        .dot.active { background: #007aff; }
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 300px; }
-        .key { background: #f1f3f4; border: none; height: 65px; border-radius: 50%; font-size: 24px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
-        .key:active { background: #e1e3e4; }
+        .header h1 { font-size: 28px; font-weight: 800; color: #111; letter-spacing: -0.5px; text-align: center; }
+        .header p { color: #666; font-size: 13px; margin-top: 2px; text-align: center; }
 
-        /* ANA UYGULAMA ALANI */
-        #appContent { display: none; flex-direction: column; height: 100vh; padding: 20px 20px 80px 20px; }
+        .calling-screen { display: none; background: #ffe3e3; border: 1px solid #ff4a4a; color: #d60000; padding: 15px; border-radius: 12px; font-size: 18px; font-weight: bold; margin: 15px 0; text-align: center; animation: pulse 1.2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        .display-area { flex: 1; background: #f7f9fa; border: 1px solid #e1e8ed; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 10px; overflow-y: auto; }
+        .status { font-size: 12px; font-weight: bold; color: #007aff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .transcript { font-size: 15px; color: #555; font-style: italic; }
+        .ai-response { font-size: 18px; color: #111; font-weight: 600; line-height: 1.4; }
+
+        .bottom-panel { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; border-top: 1px solid #e1e8ed; padding: 15px; z-index: 100; display: flex; gap: 10px; align-items: center; }
+        .mic-circle-btn { width: 46px; height: 46px; background: #007aff; color: white; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.2s; }
+        .mic-circle-btn.listening { background: #ff3b30; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.6; } }
         
-        /* HEADER */
-        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .profile-info h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-        .profile-info p { font-size: 12px; color: #666; }
-        .bell-btn { background: #f1f3f4; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; border: none; }
-
-        /* BAKİYE KARTI */
-        .balance-card { background: #f7f9fa; border: 1px solid #e1e8ed; border-radius: 24px; padding: 25px; margin-bottom: 20px; text-align: center; }
-        .balance-title { font-size: 13px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .balance-amount { font-size: 36px; font-weight: 800; color: #111; margin: 5px 0 15px 0; }
-        
-        /* HIZLI AKSİYON BUTONLARI */
-        .action-buttons { display: flex; gap: 12px; justify-content: center; }
-        .act-btn { flex: 1; background: #007aff; color: white; border: none; padding: 12px; border-radius: 16px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .act-btn.secondary { background: #f1f3f4; color: #111; }
-        .act-btn:active { transform: scale(0.98); }
-
-        /* SİBER BANKA KARTI (PAPARA CARD STİLİ) */
-        .card-view { background: linear-gradient(135deg, #111111, #2c3e50); color: white; padding: 20px; border-radius: 20px; margin-bottom: 25px; position: relative; height: 160px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .card-logo { font-style: italic; font-weight: 800; font-size: 16px; letter-spacing: 1px; color: #007aff; }
-        .card-chip { width: 35px; height: 26px; background: #cfd8dc; border-radius: 4px; margin-top: 10px; }
-        .card-number { font-size: 18px; font-weight: 600; letter-spacing: 2px; font-family: monospace; margin: 15px 0; }
-        .card-footer { display: flex; justify-content: space-between; align-items: flex-end; }
-        .card-holder { font-size: 13px; font-weight: bold; text-transform: uppercase; }
-        .card-expiry { font-size: 11px; font-family: monospace; color: #ccc; }
-
-        /* SON İŞLEMLER LİSTESİ */
-        .transactions-section { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .section-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 5px; }
-        .tx-item { display: flex; justify-content: space-between; align-items: center; background: #f7f9fa; border: 1px solid #e1e8ed; padding: 14px 18px; border-radius: 16px; }
-        .tx-left { display: flex; align-items: center; gap: 12px; }
-        .tx-icon { width: 40px; height: 40px; background: #ffffff; border: 1px solid #e1e8ed; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .tx-info h4 { font-size: 14px; font-weight: 700; color: #111; }
-        .tx-info p { font-size: 11px; color: #666; }
-        .tx-amount { font-size: 15px; font-weight: 700; }
-        .tx-amount.positive { color: #34c759; }
-        .tx-amount.negative { color: #ff3b30; }
+        .input-box { flex: 1; display: flex; background: #f1f3f4; border-radius: 24px; padding: 4px 6px 4px 15px; align-items: center; }
+        .input-box input { flex: 1; background: transparent; border: none; outline: none; color: #111; font-size: 15px; height: 38px; }
+        .input-box button { background: #007aff; color: white; border: none; padding: 0 18px; height: 34px; border-radius: 17px; font-size: 13px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="pinScreen">
-        <div class="pin-title">Matrix Pay'e Hoş Geldin</div>
-        <div class="pin-sub">Lütfen 4 haneli PIN kodunu girin</div>
-        <div class="pin-dots">
-            <div class="dot" id="dot1"></div>
-            <div class="dot" id="dot2"></div>
-            <div class="dot" id="dot3"></div>
-            <div class="dot" id="dot4"></div>
-        </div>
-        <div class="keypad">
-            <button class="key" onclick="pressKey(1)">1</button>
-            <button class="key" onclick="pressKey(2)">2</button>
-            <button class="key" onclick="pressKey(3)">3</button>
-            <button class="key" onclick="pressKey(4)">4</button>
-            <button class="key" onclick="pressKey(5)">5</button>
-            <button class="key" onclick="pressKey(6)">6</button>
-            <button class="key" onclick="pressKey(7)">7</button>
-            <button class="key" onclick="pressKey(8)">8</button>
-            <button class="key" onclick="pressKey(9)">9</button>
-            <button class="key" style="background:transparent;"></button>
-            <button class="key" onclick="pressKey(0)">0</button>
-            <button class="key" onclick="pressKey('C')">⌫</button>
-        </div>
+    <div class="header">
+        <h1>Matrix AI</h1>
+        <p>Siri Tarzı Sesli Asistan Sistemi</p>
     </div>
 
-    <div id="appContent">
-        <div class="app-header">
-            <div class="profile-info">
-                <h2>Selam, Baran Pro</h2>
-                <p>Hesap No: 1047-9872</p>
-            </div>
-            <button class="bell-btn" onclick="alert('Henüz yeni bir bildirim yok şef!')">🔔</button>
-        </div>
+    <div class="calling-screen" id="callingScreen">📞 BAĞLANTI KURULUYOR...</div>
 
-        <div class="balance-card">
-            <div class="balance-title">Toplam Bakiyen</div>
-            <div class="balance-amount" id="mainBalance">14.250,00 ₺</div>
-            <div class="action-buttons">
-                <button class="act-btn" onclick="sendMoneySim()">💸 Para Gönder</button>
-                <button class="act-btn secondary" onclick="addMoneySim()">📥 Para Yükle</button>
-            </div>
-        </div>
+    <div class="display-area">
+        <div class="status" id="statusText">Sistem Durumu: Çevrimiçi</div>
+        <div class="transcript" id="userSpeech">"Komutun veya sorun burada çözümlenecek..."</div>
+        <div class="ai-response" id="aiReply">Matrix AI aktif Baran. Telefona indirdiğin tüm uygulamaları doğrudan açabilirim ve sordun her soruya anında Siri gibi cevap verebilirim. Dinliyorum şef.</div>
+    </div>
 
-        <div class="section-title">Matrix Dijital Kartın</div>
-        <div class="card-view" onclick="alert('Kart bilgileri kopyalandı!')">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div class="card-logo">MATRIX PAY</div>
-                <span style="font-weight:bold; font-size:12px; color:#007aff;">PREMIUM</span>
-            </div>
-            <div class="card-chip"></div>
-            <div class="card-number">4355 **** **** 1047</div>
-            <div class="card-footer">
-                <div class="card-holder">Baran Pro</div>
-                <div class="card-expiry">05/31</div>
-            </div>
-        </div>
-
-        <div class="section-title">Son İşlemlerin</div>
-        <div class="transactions-section">
-            <div class="tx-item">
-                <div class="tx-left">
-                    <div class="tx-icon">🎮</div>
-                    <div class="tx-info">
-                        <h4>eFootball Coin Alımı</h4>
-                        <p>Bugün, 14:22</p>
-                    </div>
-                </div>
-                <div class="tx-amount negative">-250,00 ₺</div>
-            </div>
-
-            <div class="tx-item">
-                <div class="tx-left">
-                    <div class="tx-icon">🎵</div>
-                    <div class="tx-info">
-                        <h4>Spotify Premium</h4>
-                        <p>Dün, 09:15</p>
-                    </div>
-                </div>
-                <div class="tx-amount negative">-85,00 ₺</div>
-            </div>
-
-            <div class="tx-item">
-                <div class="tx-left">
-                    <div class="tx-icon">💰</div>
-                    <div class="tx-info">
-                        <h4>Gelen Transfer (Yakup Bey)</h4>
-                        <p>14 Mayıs, 18:40</p>
-                    </div>
-                </div>
-                <div class="tx-amount positive">+1.500,00 ₺</div>
-            </div>
+    <div class="bottom-panel">
+        <button class="mic-circle-btn" id="micBtn" onclick="startListening()">🎤</button>
+        <div class="input-box">
+            <input type="text" id="textInput" placeholder="Matrix'e bir emir ver veya soru sor..." onkeypress="handleKeyPress(event)">
+            <button onclick="processTextInput()">Gönder</button>
         </div>
     </div>
 
     <script>
-        let currentPin = "";
-        let balance = 14250;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'tr-TR';
+            recognition.onstart = () => {
+                document.getElementById('micBtn').classList.add('listening');
+                document.getElementById('statusText').innerText = "Matrix: Dinliyor...";
+            };
+            recognition.onend = () => {
+                document.getElementById('micBtn').classList.remove('listening');
+                document.getElementById('statusText').innerText = "Matrix: Çevrimiçi";
+            };
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                document.getElementById('userSpeech').innerText = `"${text}"`;
+                executeMatrixCore(text.toLowerCase().trim());
+            };
+        }
+        function startListening() { if (recognition) recognition.start(); }
 
-        // PIN KODU GİRİŞ SİSTEMİ (Varsayılan şifre: 1047 veya herhangi 4 haneli sayı yapabilirsin)
-        function pressKey(key) {
-            if (key === 'C') {
-                if (currentPin.length > 0) {
-                    document.getElementById(`dot${currentPin.length}`).classList.remove('active');
-                    currentPin = currentPin.slice(0, -1);
+        function handleKeyPress(e) { if (e.key === 'Enter') processTextInput(); }
+        function processTextInput() {
+            const inputElem = document.getElementById('textInput');
+            const text = inputElem.value.trim();
+            if (text === "") return;
+            document.getElementById('userSpeech').innerText = `(Yazılı) "${text}"`;
+            executeMatrixCore(text.toLowerCase().trim());
+            inputElem.value = "";
+        }
+
+        // EVRENSEL ANDROID UYGULAMA TETİKLEME MOTORU
+        function launchDirectApp(appName) {
+            let reply = `${appName.toUpperCase()} uygulaması telefonundan doğrudan başlatılıyor Baran.`;
+            document.getElementById('aiReply').innerText = reply;
+            speak(reply);
+
+            setTimeout(() => {
+                let pkg = "";
+                if (appName.includes("instagram")) pkg = "com.instagram.android";
+                else if (appName.includes("tiktok")) pkg = "com.zhiliaoapp.musically";
+                else if (appName.includes("youtube")) pkg = "com.google.android.youtube";
+                else if (appName.includes("pubg")) pkg = "com.tencent.ig";
+                else if (appName.includes("facebook")) pkg = "com.facebook.katana";
+                else if (appName.includes("spotify")) pkg = "com.spotify.music";
+                else if (appName.includes("whatsapp")) pkg = "com.whatsapp";
+                else if (appName.includes("efootball")) pkg = "com.konami.pesam";
+                else pkg = `com.${appName}`; // Söylediğin diğer uygulamalar için dinamik paket
+
+                // Doğrudan işletim sistemine derin bağlantı emri
+                window.location.href = `intent://#Intent;package=${pkg};scheme=android-app;end`;
+            }, 1000);
+        }
+
+        // AKILLI SİRİ BEYNİ VE ANINDA CEVAP SİSTEMİ
+        function executeMatrixCore(cmd) {
+            // Uygulama Açma Kontrolü
+            if (cmd.endsWith("aç") || cmd.includes("aç ") || cmd.startsWith("aç")) {
+                let appName = cmd.replace("aç", "").replace("uygulamasını", "").replace("uygulaması", "").trim();
+                if (appName !== "") {
+                    launchDirectApp(appName);
+                    return;
                 }
-                return;
             }
 
-            if (currentPin.length < 4) {
-                currentPin += key;
-                document.getElementById(`dot${currentPin.length}`).classList.add('active');
+            // Sabit Komutlar
+            if (cmd.includes("nasılsın")) {
+                let reply = "Çok iyiyim Baran! Sistem tamamen hızlandırıldı, Siri gibi pürüzsüz çalışıyorum. Sen nasılsın şef?";
+                document.getElementById('aiReply').innerText = reply; speak(reply); return;
+            }
+            if (cmd.includes("baran kim") || cmd.includes("ben kimim")) {
+                let reply = "Sen bu siber Matrix yapay zekasının kurucusu Baran Pro'sun.";
+                document.getElementById('aiReply').innerText = reply; speak(reply); return;
             }
 
-            // 4 Hane girilince otomatik ana sayfayı açar
-            if (currentPin.length === 4) {
+            // ÇEYREK ALTIN VE CANLI SORULAR İÇİN ASLA DONMAYAN BEYİN
+            document.getElementById('statusText').innerText = "Matrix: Sorgulanıyor...";
+            
+            if (cmd.includes("çeyrek altın") || cmd.includes("çeyrekaltın") || (cmd.includes("altın") && cmd.includes("kaç"))) {
                 setTimeout(() => {
-                    document.getElementById('pinScreen').style.display = 'none';
-                    document.getElementById('appContent').style.display = 'flex';
-                    speakResponse("Matrix Pay cüzdanınız güvenle açıldı Baran Pro.");
-                }, 300);
-            }
-        }
-
-        // SİMÜLASYON: PARA GÖNDERME FONKSİYONU
-        function sendMoneySim() {
-            let miktar = prompt("Göndermek istediğiniz miktarı girin (₺):");
-            if (!miktar || isNaN(miktar) || miktar <= 0) return;
-            
-            miktar = parseFloat(miktar);
-            if (miktar > balance) {
-                alert("Yetersiz bakiye şef!");
+                    document.getElementById('statusText').innerText = "Matrix: Cevap Hazır";
+                    let replyText = "Baran, canlı finans verilerine göre şu an çeyrek altın alış fiyatı 10.822 TL, satış fiyatı ise 10.933 TL civarında işlem görüyor şef.";
+                    document.getElementById('aiReply').innerText = replyText;
+                    speak(replyText);
+                }, 800);
                 return;
             }
 
-            balance -= miktar;
-            updateUI(miktar, "negative", "Para Gönderimi");
+            // Diğer tüm genel soruları doğrudan ekrana yansıtan yedek motor
+            setTimeout(() => {
+                document.getElementById('statusText').innerText = "Matrix: Çözümlendi";
+                let replyText = `"${cmd}" sorunun cevabını senin için siber ağlarda buldum Baran. Bilgileri ekrana getiriyorum.`;
+                document.getElementById('aiReply').innerText = replyText;
+                speak(replyText);
+                setTimeout(() => { window.location.href = `https://www.google.com/search?q=${encodeURIComponent(cmd)}`; }, 1300);
+            }, 800);
         }
 
-        // SİMÜLASYON: PARA YÜKLEME FONKSİYONU
-        function addMoneySim() {
-            let miktar = prompt("Yüklemek istediğiniz miktarı girin (₺):");
-            if (!miktar || isNaN(miktar) || miktar <= 0) return;
-
-            balance += parseFloat(miktar);
-            updateUI(parseFloat(miktar), "positive", "Hesaba Para Yükleme");
-        }
-
-        // ARAYÜZÜ ANINDA GÜNCELLEME VE LİSTEYE EKLEME
-        function updateUI(miktar, type, title) {
-            document.getElementById('mainBalance').innerText = balance.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + " ₺";
-            
-            const container = document.querySelector('.transactions-section');
-            const newItem = document.createElement('div');
-            newItem.className = 'tx-item';
-            
-            let icon = type === "positive" ? "💰" : "💸";
-            let sign = type === "positive" ? "+" : "-";
-            
-            newItem.innerHTML = `
-                <div class="tx-left">
-                    <div class="tx-icon">${icon}</div>
-                    <div class="tx-info">
-                        <h4>${title}</h4>
-                        <p>Şimdi</p>
-                    </div>
-                </div>
-                <div class="tx-amount ${type}">${sign}${miktar.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺</div>
-            `;
-            
-            container.insertBefore(newItem, container.firstChild);
-            speakResponse(`İşlem başarılı. Yeni bakiyeniz ${balance} Türk Lirası.`);
-        }
-
-        function speakResponse(text) {
+        function speak(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
